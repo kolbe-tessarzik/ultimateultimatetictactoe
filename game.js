@@ -5,18 +5,14 @@ board_contents = Array.from({ length: 9 }, (_, index) => new Board(Array.from({ 
 
 const board = new Board(board_contents);
 
-function getMousePosOnCanvas(event) {
-    return [event.clientX - canvas.getBoundingClientRect().left, event.clientY - canvas.getBoundingClientRect().top];
-}
-
 document.addEventListener('mousemove', (event) => {
-  const [x, y] = getMousePosOnCanvas(event);
+  const [x, y] = getMousePosOnCanvas(canvas, event);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   board.draw(ctx, 0, 0, 750, x, y);
 });
 
 document.addEventListener('click', (event) => {
-    const [x, y] = getMousePosOnCanvas(event);
+    const [x, y] = getMousePosOnCanvas(canvas, event);
     board.click(x, y, "X");
 });
