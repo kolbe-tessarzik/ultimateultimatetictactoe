@@ -8,7 +8,6 @@ class Box {
     setHoverRect(x, y, size) {
         this.hoverRect = new DOMRectReadOnly(x, y, size, size);
     }
-
 }
 
 class Cell extends Box {
@@ -33,7 +32,7 @@ class Cell extends Box {
                 break;
         }
 
-        if (highlight) {
+        if (!this.value && highlight) {
             ctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
             ctx.fillRect(this.hoverRect.left, this.hoverRect.top, this.hoverRect.width, this.hoverRect.height);
         }
