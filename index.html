@@ -1,8 +1,18 @@
 <head>
     <script src="helpers.js"></script>
     <script src="board.js"></script>
+    <style>
+        .parent {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
+
 <body>
-    <canvas id="gameCanvas" width="750" height="750">Sorry, your browser doesn't appear to support canvas.</canvas>
+    <div class="parent">
+        <canvas id="gameCanvas" width="750" height="750">Sorry, your browser doesn't appear to support canvas.</canvas>
+    </div>
     <script src="game.js"></script>
 </body>
