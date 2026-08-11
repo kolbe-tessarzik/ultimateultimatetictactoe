@@ -6,10 +6,6 @@ board_contents = Array.from({ length: 9 }, (_, index) => new Board(Array.from({ 
 
 const board = new Board(board_contents);
 
-document.addEventListener("DOMContentLoaded", () => {
-});
-
-
 function getMousePosOnCanvas(event) {
     return [event.clientX - canvasRect.left, event.clientY - canvasRect.top];
 }
