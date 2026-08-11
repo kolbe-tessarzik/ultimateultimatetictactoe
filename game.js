@@ -1,13 +1,12 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const canvasRect = canvas.getBoundingClientRect();
 
 board_contents = Array.from({ length: 9 }, (_, index) => new Board(Array.from({ length: 9 }, (_, index) => new Board(Array.from({ length: 9 }, (_, index) => new Cell())))));
 
 const board = new Board(board_contents);
 
 function getMousePosOnCanvas(event) {
-    return [event.clientX - canvasRect.left, event.clientY - canvasRect.top];
+    return [event.clientX - canvas.getBoundingClientRect().left, event.clientY - canvas.getBoundingClientRect().top];
 }
 
 document.addEventListener('mousemove', (event) => {
