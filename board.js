@@ -1,24 +1,20 @@
 const boardPadding = 0.05;
 
-function drawLine(ctx, x1, y1, x2, y2) {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-}
-
-function getRectCollision(cursorX, cursorY, rect) {
-    return cursorX >= rect.left && cursorX <= rect.right && cursorY >= rect.top && cursorY <= rect.bottom;
-}
-
-class Cell {
-    constructor(value = "") {
-        this.value = value;
+class Box {
+    constructor() {
         this.hoverRect = null;
     }
 
     setHoverRect(x, y, size) {
         this.hoverRect = new DOMRectReadOnly(x, y, size, size);
+    }
+
+}
+
+class Cell extends Box {
+    constructor(value = "") {
+        super();
+        this.value = value;
     }
 
     draw(ctx, x, y, size, highlight = false) {
@@ -44,16 +40,11 @@ class Cell {
     }
 }
 
-class Board {
+class Board extends Box {
     constructor(contents) {
+        super();
         this.contents = contents;
-        this.hoverRect = null;
     }
-
-    setHoverRect(x, y, size) {
-        this.hoverRect = new DOMRectReadOnly(x, y, size, size);
-    }
-
 
     /**
      * Gets the cell at the specified coordinates (zero-based, +x to the right, y down).

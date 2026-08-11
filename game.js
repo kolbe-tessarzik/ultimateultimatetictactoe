@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function getMousePosOnCanvas(event) {
     return [event.clientX - canvasRect.left, event.clientY - canvasRect.top];
 }
+
 document.addEventListener('mousemove', (event) => {
   const [x, y] = getMousePosOnCanvas(event);
 
