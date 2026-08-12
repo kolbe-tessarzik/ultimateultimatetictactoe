@@ -5,14 +5,41 @@ board_contents = Array.from({ length: 9 }, (_, index) => new Board(Array.from({ 
 
 const board = new Board(board_contents);
 
+let turn = "X";
+
+function writeTurnStatus() {
+    ctx.font = "30px Arial";
+    ctx.fillStyle = '#000000';
+
+    const metrics = ctx.measureText(`${turn}'s turn`);
+    const textWidth = metrics.width;
+    // measure the text height by adding the farthest distance above and below the central line of the text
+    const textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+    ctx.fillText(`${turn}'s turn`, (canvas.width - textWidth) / 2, textHeight);
+}
+
+function updateTurn() {
+    turn = turn === "X" ? "O" : "X";
+}
+
+function draw(cursorX, cursorY) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  board.draw(ctx, 0, 0, 750, cursorX, cursorY);
+  writeTurnStatus();
+}
+
 document.addEventListener('mousemove', (event) => {
   const [x, y] = getMousePosOnCanvas(canvas, event);
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  board.draw(ctx, 0, 0, 750, x, y);
+  draw(x, y);
 });
 
 document.addEventListener('click', (event) => {
     const [x, y] = getMousePosOnCanvas(canvas, event);
-    board.click(x, y, "X");
+    const result = board.click(x, y, turn);
+    if (result) {
+        updateTurn();
+        draw();
+    }
 });

@@ -5,6 +5,13 @@ function drawLine(ctx, x1, y1, x2, y2) {
     ctx.stroke();
 }
 
+function drawCircle(ctx, x, y, radius) {
+    ctx.beginPath();
+    // The last two params are the start and end angles in radians
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+}
+
 function getRectCollision(cursorX, cursorY, rect) {
     return cursorX >= rect.left && cursorX <= rect.right && cursorY >= rect.top && cursorY <= rect.bottom;
 }

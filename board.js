@@ -16,6 +16,15 @@ class Cell extends Box {
         this.value = value;
     }
 
+    click(value) {
+        if (!this.value) {
+            this.value = value;
+            return [];
+        } else {
+            return undefined;
+        }
+    }
+
     /**
      * Draw the Tic-Tac-Toe cell letter.
      * @param {CanvasRenderingContext2D} ctx - The canvas context.
@@ -33,6 +42,9 @@ class Cell extends Box {
             case "X":
                 drawLine(ctx, x + 0.1*size, y + 0.1*size, x + 0.9*size, y + 0.9*size);
                 drawLine(ctx, x + 0.9*size, y + 0.1*size, x + 0.1*size, y + 0.9*size);
+                break;
+            case "O":
+                drawCircle(ctx, x + 0.5*size, y + 0.5*size, 0.4*size);
                 break;
             case "":
                 break;
@@ -71,6 +83,7 @@ class Board extends Box {
      * @param {number} mouseX - The x-coordinate.
      * @param {number} mouseY - The y-coordinate.
      * @param {string} value - The value to set the cell to.
+     * @returns {Array | boolean} True if the cell was set, false if the cell was already set or the click was outside the board.
      */
 
     click(mouseX, mouseY, value) {
@@ -79,15 +92,14 @@ class Board extends Box {
                 const cell = this.cellAt(i, j);
                 if (getRectCollision(mouseX, mouseY, cell.hoverRect)) {
                     if (cell instanceof Cell) {
-                        if (!cell.value) {
-                            cell.value = value;
-                        }
+                        return cell.click(value) ? [[i, j]] : false;
                     } else {
-                        cell.click(mouseX, mouseY, value);
+                        return [[i, j], ...cell.click(mouseX, mouseY, value)];
                     }
                 }
             }
         }
+        return false;
     }
 
      /**
