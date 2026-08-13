@@ -64,6 +64,7 @@ class Board extends Box {
     constructor(contents) {
         super();
         this.contents = contents;
+        this.allowedBoard = undefined;
     }
 
     /**
@@ -75,6 +76,32 @@ class Board extends Box {
 
     cellAt(x, y) {
         return this.contents[y*3 + x];
+    }
+
+    clearAllowedBoard() {
+        this.allowedBoard = undefined;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cell = this.cellAt(i, j);
+                if (cell instanceof Board) {
+                    cell.clearAllowedBoard();
+                }
+            }
+        }
+    }
+
+    /**
+     * Set which board the user is allowed to play in.
+     * @param {Array} posList - The list of positions (each position in the list is a level deeper than the last).
+     */
+
+    setAllowedBoard(posList) {
+        const pos = posList.shift();
+        const cell = this.cellAt(pos[0], pos[1]);
+        if (posList.length !== 0) {
+            cell.setAllowedBoard(posList);
+        }
+        this.allowedBoard = pos;
     }
 
     /**
@@ -89,12 +116,17 @@ class Board extends Box {
     click(mouseX, mouseY, value) {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
+                console.log(this.allowedBoard);
+                if (this.allowedBoard && (this.allowedBoard[0] !== i || this.allowedBoard[1] !== j)) {
+                    continue;
+                }
                 const cell = this.cellAt(i, j);
                 if (getRectCollision(mouseX, mouseY, cell.hoverRect)) {
                     if (cell instanceof Cell) {
                         return cell.click(value) ? [[i, j]] : false;
                     } else {
-                        return [[i, j], ...cell.click(mouseX, mouseY, value)];
+                        const result = cell.click(mouseX, mouseY, value)
+                        return result ? [[i, j], ...result] : false;
                     }
                 }
             }
@@ -152,9 +184,16 @@ class Board extends Box {
                 }
 
                 if (cell instanceof Cell) {
-                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, cell instanceof Cell && getRectCollision(mouseX, mouseY, cell.hoverRect));
+                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, getRectCollision(mouseX, mouseY, cell.hoverRect));
                 } else {
-                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, mouseX, mouseY);
+                    const passHighlight = !this.allowedBoard || (this.allowedBoard[0] === i && this.allowedBoard[1] === j);
+                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, passHighlight ? mouseX : -1, passHighlight ? mouseY : -1);
+                    if (this.allowedBoard && this.allowedBoard[0] === i && this.allowedBoard[1] === j && !cell.allowedBoard) {
+                        // All of the allowed moves are within this board, box it so the user knows what's going on
+                        ctx.strokeStyle = "orange";
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(left + i*cellSize, top + j*cellSize, cellSize, cellSize);
+                    }
                 }
             }
         }

@@ -5,6 +5,8 @@ board_contents = Array.from({ length: 9 }, (_, index) => new Board(Array.from({ 
 
 const board = new Board(board_contents);
 
+board.setAllowedBoard([[1, 1]]);
+
 let turn = "X";
 
 function writeTurnStatus() {
@@ -41,5 +43,7 @@ document.addEventListener('click', (event) => {
     if (result) {
         updateTurn();
         draw();
+        result.shift();
+        board.setAllowedBoard(result);
     }
 });
