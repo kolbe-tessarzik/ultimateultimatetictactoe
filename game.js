@@ -27,7 +27,7 @@ function updateTurn() {
 
 function draw(cursorX, cursorY) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  board.draw(ctx, 0, 0, 750, cursorX, cursorY);
+  board.draw(ctx, 0, 0, 750, cursorX, cursorY, turn === "X" ? xHighlight : oHighlight);
   writeTurnStatus();
 }
 
@@ -39,7 +39,7 @@ document.addEventListener('mousemove', (event) => {
 
 document.addEventListener('click', (event) => {
     const [x, y] = getMousePosOnCanvas(canvas, event);
-    const result = board.click(x, y, turn);
+    const result = board.click(x, y, turn, turn === "X" ? xColor : oColor);
     if (result) {
         updateTurn();
         draw();

@@ -1,5 +1,11 @@
 const boardPadding = 0.05;
 
+const xHighlight = 'rgba(0,   0, 255, 0.5)';
+const oHighlight = 'rgba(255, 0, 0,   0.5)';
+
+const xColor = 'rgba(0,   0, 255, 1)';
+const oColor = 'rgba(255, 0, 0,   1)';
+
 class Box {
     constructor() {
         this.hoverRect = null;
@@ -34,16 +40,18 @@ class Cell extends Box {
      * @param {boolean} highlight - Whether to highlight the cell (for hover effect).
      */
 
-    draw(ctx, x, y, size, highlight = false) {
+    draw(ctx, x, y, size, highlightColor = null) {
         ctx.strokeStyle = '#007bff';
         ctx.lineWidth = 5;
 
         switch (this.value) {
             case "X":
+                ctx.strokeStyle = xColor;
                 drawLine(ctx, x + 0.1*size, y + 0.1*size, x + 0.9*size, y + 0.9*size);
                 drawLine(ctx, x + 0.9*size, y + 0.1*size, x + 0.1*size, y + 0.9*size);
                 break;
             case "O":
+                ctx.strokeStyle = oColor;
                 drawCircle(ctx, x + 0.5*size, y + 0.5*size, 0.4*size);
                 break;
             case "":
@@ -53,8 +61,8 @@ class Cell extends Box {
                 break;
         }
 
-        if (!this.value && highlight) {
-            ctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
+        if (!this.value && highlightColor) {
+            ctx.fillStyle = highlightColor;
             ctx.fillRect(this.hoverRect.left, this.hoverRect.top, this.hoverRect.width, this.hoverRect.height);
         }
     }
@@ -96,6 +104,7 @@ class Board extends Box {
      */
 
     setAllowedBoard(posList) {
+        this.clearAllowedBoard();
         const pos = posList.shift();
         const cell = this.cellAt(pos[0], pos[1]);
         if (posList.length !== 0) {
@@ -167,7 +176,7 @@ class Board extends Box {
      * @param {number} mouseY - The y-coordinate of the mouse (for hover highlight).
      */
 
-    draw(ctx, x, y, size, mouseX = -1, mouseY = -1) {
+    draw(ctx, x, y, size, mouseX = -1, mouseY = -1, highlightColor = "blue") {
         const cellSize = (size / 3) *(1 - 2*boardPadding);
 
         const left = x + size*boardPadding;
@@ -184,10 +193,10 @@ class Board extends Box {
                 }
 
                 if (cell instanceof Cell) {
-                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, getRectCollision(mouseX, mouseY, cell.hoverRect));
+                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, getRectCollision(mouseX, mouseY, cell.hoverRect) ? highlightColor : null);
                 } else {
                     const passHighlight = !this.allowedBoard || (this.allowedBoard[0] === i && this.allowedBoard[1] === j);
-                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, passHighlight ? mouseX : -1, passHighlight ? mouseY : -1);
+                    cell.draw(ctx, left + i*cellSize, top + j*cellSize, cellSize, passHighlight ? mouseX : -1, passHighlight ? mouseY : -1, highlightColor);
                     if (this.allowedBoard && this.allowedBoard[0] === i && this.allowedBoard[1] === j && !cell.allowedBoard) {
                         // All of the allowed moves are within this board, box it so the user knows what's going on
                         ctx.strokeStyle = "orange";
