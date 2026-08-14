@@ -24,6 +24,28 @@ class Box {
     setHoverRect(x, y, size) {
         this.hoverRect = new DOMRectReadOnly(x, y, size, size);
     }
+
+    drawLetter(ctx, x, y, size) {
+        ctx.lineWidth = size / 5.5;
+
+        switch (this.value) {
+            case "X":
+                ctx.strokeStyle = xColor;
+                drawLine(ctx, x + 0.1*size, y + 0.1*size, x + 0.9*size, y + 0.9*size);
+                drawLine(ctx, x + 0.9*size, y + 0.1*size, x + 0.1*size, y + 0.9*size);
+                break;
+            case "O":
+                ctx.strokeStyle = oColor;
+                drawCircle(ctx, x + 0.5*size, y + 0.5*size, 0.4*size);
+                break;
+            case "":
+                break;
+            default:
+                console.warn(`Unknown cell value: ${this.value}`);
+                break;
+        }
+
+    }
 }
 
 class Cell extends Box {
@@ -42,25 +64,7 @@ class Cell extends Box {
      */
 
     draw(ctx, x, y, size, highlightColor = null) {
-        ctx.strokeStyle = '#007bff';
-        ctx.lineWidth = 5;
-
-        switch (this.value) {
-            case "X":
-                ctx.strokeStyle = xColor;
-                drawLine(ctx, x + 0.1*size, y + 0.1*size, x + 0.9*size, y + 0.9*size);
-                drawLine(ctx, x + 0.9*size, y + 0.1*size, x + 0.1*size, y + 0.9*size);
-                break;
-            case "O":
-                ctx.strokeStyle = oColor;
-                drawCircle(ctx, x + 0.5*size, y + 0.5*size, 0.4*size);
-                break;
-            case "":
-                break;
-            default:
-                console.warn(`Unknown cell value: ${this.value}`);
-                break;
-        }
+        this.drawLetter(ctx, x, y, size);
 
         if (!this.value && highlightColor) {
             ctx.fillStyle = highlightColor;
@@ -156,7 +160,6 @@ class Board extends Box {
     click(mouseX, mouseY, value) {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                console.log(this.allowedBoard);
                 if (this.allowedBoard && (this.allowedBoard[0] !== i || this.allowedBoard[1] !== j)) {
                     continue;
                 }
@@ -239,6 +242,9 @@ class Board extends Box {
                     }
                 }
             }
+        }
+        if (this.value) {
+            this.drawLetter(ctx, left, top, size);
         }
     }
 }
