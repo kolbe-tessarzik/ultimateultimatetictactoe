@@ -214,7 +214,7 @@ class Board extends Box {
      */
 
     draw(ctx, x, y, size, mouseX = -1, mouseY = -1, highlightColor = "blue") {
-        const cellSize = (size / 3) *(1 - 2*boardPadding);
+        const cellSize = (size / 3) * (1 - 2*boardPadding);
 
         const left = x + size*boardPadding;
         const right = x + size*(1 - boardPadding);
@@ -244,7 +244,7 @@ class Board extends Box {
             }
         }
         if (this.value) {
-            this.drawLetter(ctx, left, top, size);
+            this.drawLetter(ctx, x, y, size);
         }
     }
 }
