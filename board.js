@@ -78,6 +78,16 @@ class Board extends Box {
         super();
         this.contents = contents;
         this.allowedBoard = undefined;
+
+        // iteration is what level of board this is
+        // for example, the smallest board would be iteration 1
+        // the second smallest would be iteration 2, etc.
+        this.iteration = 0;
+        let cell = this;
+        while (cell instanceof Board) {
+            this.iteration++;
+            cell = cell.cellAt(0, 0);
+        }
     }
 
     /**
@@ -110,15 +120,21 @@ class Board extends Box {
 
     setAllowedBoard(posList) {
         this.clearAllowedBoard();
-        const pos = posList.shift();
+
+        const pos = posList.shift(); // drop the 0th element; that was the pos of this board
         const cell = this.cellAt(pos[0], pos[1]);
         if (posList.length !== 0 && !cell.value) {
             cell.setAllowedBoard(posList);
         }
-        if (!cell.value) {
-            this.allowedBoard = pos;
-        } else {
+
+        if (cell.value && cell.iteration % 2) {
+            // if the cell is already won and it's an odd iteration, it's a freebie
             this.allowedBoard = undefined;
+        } else {
+            // The reason even iterations force you to go there anyway is that
+            // which even iteration board you play on is determined by your own previous play.
+            // Freebies are meant as a deterrent to use them, not an incentive
+            this.allowedBoard = pos;
         }
     }
 
