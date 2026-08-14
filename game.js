@@ -40,6 +40,9 @@ document.addEventListener('mousemove', (event) => {
 document.addEventListener('click', (event) => {
     const [x, y] = getMousePosOnCanvas(canvas, event);
     const result = board.click(x, y, turn, turn === "X" ? xColor : oColor);
+    if (board.value) {
+        alert(`${board.value} wins!`);
+    }
     if (result) {
         updateTurn();
         draw();

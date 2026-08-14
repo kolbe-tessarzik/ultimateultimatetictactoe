@@ -9,6 +9,16 @@ const oColor = 'rgba(255, 0, 0,   1)';
 class Box {
     constructor() {
         this.hoverRect = null;
+        this.value = "";
+    }
+
+    click(value) {
+        if (!this.value) {
+            this.value = value;
+            return [];
+        } else {
+            return undefined;
+        }
     }
 
     setHoverRect(x, y, size) {
@@ -20,15 +30,6 @@ class Cell extends Box {
     constructor(value = "") {
         super();
         this.value = value;
-    }
-
-    click(value) {
-        if (!this.value) {
-            this.value = value;
-            return [];
-        } else {
-            return undefined;
-        }
     }
 
     /**
@@ -107,10 +108,40 @@ class Board extends Box {
         this.clearAllowedBoard();
         const pos = posList.shift();
         const cell = this.cellAt(pos[0], pos[1]);
-        if (posList.length !== 0) {
+        if (posList.length !== 0 && !cell.value) {
             cell.setAllowedBoard(posList);
         }
-        this.allowedBoard = pos;
+        if (!cell.value) {
+            this.allowedBoard = pos;
+        } else {
+            this.allowedBoard = undefined;
+        }
+    }
+
+    winner() {
+        const lines = [
+            [[0, 0], [1, 0], [2, 0]],
+            [[0, 1], [1, 1], [2, 1]],
+            [[0, 2], [1, 2], [2, 2]],
+            [[0, 0], [0, 1], [0, 2]],
+            [[1, 0], [1, 1], [1, 2]],
+            [[2, 0], [2, 1], [2, 2]],
+            [[0, 0], [1, 1], [2, 2]],
+            [[0, 2], [1, 1], [2, 0]]
+        ];
+
+        for (const line of lines) {
+            const values = line.map(([x, y]) => this.cellAt(x, y).value);
+            if (values.every(value => value === "X")) {
+                console.log("X wins a board!");
+                return "X";
+            } else if (values.every(value => value === "O")) {
+                console.log("O wins a board!");
+                return "O";
+            }
+        }
+
+        return "";
     }
 
     /**
@@ -131,12 +162,15 @@ class Board extends Box {
                 }
                 const cell = this.cellAt(i, j);
                 if (getRectCollision(mouseX, mouseY, cell.hoverRect)) {
+                    let ret;
                     if (cell instanceof Cell) {
-                        return cell.click(value) ? [[i, j]] : false;
+                        ret = cell.click(value) ? [[i, j]] : false;
                     } else {
                         const result = cell.click(mouseX, mouseY, value)
-                        return result ? [[i, j], ...result] : false;
+                        ret = result ? [[i, j], ...result] : false;
                     }
+                    this.value = this.winner();
+                    return ret;
                 }
             }
         }
